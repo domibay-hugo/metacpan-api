@@ -61,8 +61,16 @@ around execute => sub {
         my $e = $_[0];
         if ( try { $e->isa('MetaCPAN::Server::QuerySanitizer::Error') } ) {
 
+            my @arrdescription = ($e->message =~ m/^(.*) at ([^\s]+) (line .*)$/mi);
+
          # this will return a 400 (text) through Catalyst::Action::Deserialize
-            $result = $e->message;
+            #$result = $e->message;
+            $result = $arrdescription[0];
+            
+            $c->detach( "/bad_request"
+                , { 'description' => $arrdescription[0]
+                    , 'file' => $arrdescription[1], 'line' => $arrdescription[2] } );
+            
 
             # this is our custom version (403) that returns json
             $c->detach( "/not_allowed", [ $e->message ] );
