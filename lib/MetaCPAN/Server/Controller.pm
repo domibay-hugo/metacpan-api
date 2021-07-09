@@ -221,6 +221,15 @@ sub not_found : Private {
     $c->stash( { message => 'Not found' } );
 }
 
+sub bad_request: Private {
+    my ( $self, $c, $description ) = @_;
+    $c->cdn_never_cache(1);
+
+    $c->res->code(400);
+    $c->stash( { message => 'Bad Request' } );
+    $c->stash( { description => $description } );
+}
+
 sub internal_error {
     my ( $self, $c, $message ) = @_;
     $c->cdn_never_cache(1);
