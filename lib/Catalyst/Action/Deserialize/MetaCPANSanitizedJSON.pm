@@ -27,6 +27,26 @@ around execute => sub {
                         ->query );
             }
         }
+        else {  #JSON Decode failed
+            if ( ref $result eq 'HASH' ) {
+                if ( defined $result->{'message'} ) {
+                    my @arrdescription = ( $result->{'message'} =~ m/^(.*) at ([^\s]+) (line .*)$/mi );
+
+
+                    $c->detach( "/bad_request"
+                        , { 'description' => $arrdescription[0]
+                            , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } );
+                }
+                else {  #The Result has no "message" Field
+                    $c->detach( "/bad_request"
+                        , { 'exception' => $result } );
+                }
+            }
+            else {  #The Result is a Scalar Value
+                $c->detach( "/bad_request"
+                    , { 'description' => $result } );
+            }
+        } #if ( $result eq '1' )
 
         foreach my $attr (qw( query_parameters parameters )) {
 
@@ -63,14 +83,14 @@ around execute => sub {
 
             my @arrdescription = ($e->message =~ m/^(.*) at ([^\s]+) (line .*)$/mi);
 
-         # this will return a 400 (text) through Catalyst::Action::Deserialize
+            # this will return a 400 (text) through Catalyst::Action::Deserialize
             #$result = $e->message;
             $result = $arrdescription[0];
-            
+
             $c->detach( "/bad_request"
                 , { 'description' => $arrdescription[0]
-                    , 'file' => $arrdescription[1], 'line' => $arrdescription[2] } );
-            
+                    , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } );
+
 
             # this is our custom version (403) that returns json
             $c->detach( "/not_allowed", [ $e->message ] );
