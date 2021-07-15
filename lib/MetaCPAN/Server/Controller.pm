@@ -221,13 +221,15 @@ sub not_found : Private {
     $c->stash( { message => 'Not found' } );
 }
 
-sub bad_request: Private {
+sub bad_request : Local : ActionClass('Deserialize') {
     my ( $self, $c, $description ) = @_;
     $c->cdn_never_cache(1);
 
     $c->res->code(400);
+    $c->res->content_type('application/json');
     $c->stash( { message => 'Bad Request' } );
     $c->stash( { description => $description } );
+    $c->detach( $c->view('JSON') );
 }
 
 sub internal_error {

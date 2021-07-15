@@ -28,24 +28,24 @@ around execute => sub {
             }
         }
         else {  #JSON Decode failed
-            if ( ref $result eq 'HASH' ) {
+            if ( ref $result ne '' ) {
                 if ( defined $result->{'message'} ) {
                     my @arrdescription = ( $result->{'message'} =~ m/^(.*) at ([^\s]+) (line .*)$/mi );
 
 
                     $c->detach( "/bad_request"
-                        , { 'description' => $arrdescription[0]
-                            , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } );
+                        , [ { 'exception_type' => ref $result ,  'description' => $arrdescription[0]
+                            , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ] );
                 }
                 else {  #The Result has no "message" Field
                     $c->detach( "/bad_request"
-                        , { 'exception' => $result } );
+                        , [ { 'exception' => $result } ] );
                 }
             }
-            else {  #The Result is a Scalar Value
+            else {  #The Result is not a Reference
                 $c->detach( "/bad_request"
-                    , { 'description' => $result } );
-            }
+                    , [ { 'description' => $result } ] );
+            } #if ( ref $result ne '' )
         } #if ( $result eq '1' )
 
         foreach my $attr (qw( query_parameters parameters )) {
