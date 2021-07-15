@@ -259,16 +259,20 @@ sub internal_error {
 }
 
 before 'end' => sub {
-    my ( $self, $cs ) = @_;
+    my ( $self, $c ) = @_;
 
     print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
     #print "res dmp:\n", dump $c->res ;
     #print "\n";
 
     if ( $c->res->code == 400 ) {
+        print "Status Code [", $c->res->code, "]\n";
+        print "Content-Type: '", $c->res->content_type ,"'\n" ;
+        print "Response Body: '", $c->res->body ,"'\n" ;
+
         $c->detach( $c->view('JSON') );
 #    $c->detach('/bad_request_json', $rarrargs);
-    }
+    } #if ( $c->res->code == 400 )
 };
 
 sub end : Private {

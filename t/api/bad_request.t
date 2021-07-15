@@ -29,7 +29,10 @@ print "Status Code: [", $tx->res->code, "]\n";
 print "Content-Type: '", $tx->res->headers->content_type , "'\n";
 
 if ( length($tx->res->body) < 1000 ) {
-    print "Response Body (max 1000): '", $tx->res->body, "'\n";
+    print "Response Body (> 1000): '", $tx->res->body, "'\n";
+}
+else {
+    print "Response Body (< 1000): too big!\n";
 }
 
 

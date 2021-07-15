@@ -35,8 +35,11 @@ around execute => sub {
                     my @arrdescription = ( $result->{'message'} =~ m/^(.*) at ([^\s]+) (line .*)$/mi );
 
 
+                    print "arr desc dmp:\n", dump @arrdescription ;
+                    print "\n";
+
                     $c->detach( '/bad_request_json'
-                        , [ { 'exception_type' => ref($result),  'description' => $arrdescription[0]
+                        , [ { 'exception_type' => ref($result), 'description' => $arrdescription[0]
                             , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ] );
                 }
                 else {  #The Result has no "message" Field
