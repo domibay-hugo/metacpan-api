@@ -6,6 +6,8 @@ use Try::Tiny qw( catch try );
 use Cpanel::JSON::XS                 ();
 use MetaCPAN::Server::QuerySanitizer ();
 
+use Data::Dump qw(dump);
+
 extends 'Catalyst::Action::Deserialize::JSON';
 
 around execute => sub {
@@ -33,17 +35,17 @@ around execute => sub {
                     my @arrdescription = ( $result->{'message'} =~ m/^(.*) at ([^\s]+) (line .*)$/mi );
 
 
-                    $c->detach( "/bad_request"
-                        , [ { 'exception_type' => ref $result ,  'description' => $arrdescription[0]
+                    $c->detach( '/bad_request_json'
+                        , [ { 'exception_type' => ref($result),  'description' => $arrdescription[0]
                             , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ] );
                 }
                 else {  #The Result has no "message" Field
-                    $c->detach( "/bad_request"
+                    $c->detach( '/bad_request_json'
                         , [ { 'exception' => $result } ] );
                 }
             }
             else {  #The Result is not a Reference
-                $c->detach( "/bad_request"
+                $c->detach( '/bad_request_json'
                     , [ { 'description' => $result } ] );
             } #if ( ref $result ne '' )
         } #if ( $result eq '1' )
@@ -87,9 +89,9 @@ around execute => sub {
             #$result = $e->message;
             $result = $arrdescription[0];
 
-            $c->detach( "/bad_request"
-                , { 'description' => $arrdescription[0]
-                    , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } );
+            $c->detach( '/bad_request_json'
+                , [ { 'description' => $arrdescription[0]
+                    , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ] );
 
 
             # this is our custom version (403) that returns json

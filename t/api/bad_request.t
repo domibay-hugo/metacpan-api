@@ -27,7 +27,10 @@ my $tx = $t->tx;
 
 print "Status Code: [", $tx->res->code, "]\n";
 print "Content-Type: '", $tx->res->headers->content_type , "'\n";
-print "Response Body: '", $tx->res->body, "'\n";
+
+if ( length($tx->res->body) < 1000 ) {
+    print "Response Body (max 1000): '", $tx->res->body, "'\n";
+}
 
 
 done_testing();

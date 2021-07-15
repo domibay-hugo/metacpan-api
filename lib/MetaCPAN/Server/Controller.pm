@@ -8,6 +8,8 @@ use Moose::Util      ();
 use MetaCPAN::Types::TypeTiny qw( HashRef );
 use MetaCPAN::Util qw( single_valued_arrayref_to_scalar );
 
+use Data::Dump qw(dump);
+
 BEGIN { extends 'Catalyst::Controller'; }
 
 __PACKAGE__->config(
@@ -221,14 +223,22 @@ sub not_found : Private {
     $c->stash( { message => 'Not found' } );
 }
 
-sub bad_request : Local : ActionClass('Deserialize') {
+sub bad_request_json : Private  {
     my ( $self, $c, $description ) = @_;
-    $c->cdn_never_cache(1);
+
+    print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
 
     $c->res->code(400);
+    $c->cdn_never_cache(1);
     $c->res->content_type('application/json');
+
     $c->stash( { message => 'Bad Request' } );
     $c->stash( { description => $description } );
+
+    if ( $c->has_errors ) {
+        $c->clear_errors;
+    }
+
     $c->detach( $c->view('JSON') );
 }
 
@@ -247,6 +257,19 @@ sub internal_error {
         $c->detach( $c->view('JSON') );
     }
 }
+
+before 'end' => sub {
+    my ( $self, $cs ) = @_;
+
+    print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
+    #print "res dmp:\n", dump $c->res ;
+    #print "\n";
+
+    if ( $c->res->code == 400 ) {
+        $c->detach( $c->view('JSON') );
+#    $c->detach('/bad_request_json', $rarrargs);
+    }
+};
 
 sub end : Private {
     my ( $self, $c ) = @_;
