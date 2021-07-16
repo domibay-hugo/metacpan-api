@@ -41,6 +41,9 @@ around execute => sub {
                     $c->detach( '/bad_request_json'
                         , [ { 'exception_type' => ref($result), 'description' => $arrdescription[0]
                             , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ] );
+
+                    #Set Result to the Exception Message
+                    $result = $arrdescription[0];
                 }
                 else {  #The Result has no "message" Field
                     $c->detach( '/bad_request_json'
@@ -93,7 +96,7 @@ around execute => sub {
             $result = $arrdescription[0];
 
             $c->detach( '/bad_request_json'
-                , [ { 'description' => $arrdescription[0]
+                , [ { 'exception_type' => ref($result), 'description' => $arrdescription[0]
                     , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ] );
 
 
@@ -118,14 +121,14 @@ after 'execute' => sub {
     print "Response Body: '", $c->res->body ,"'\n" ;
 
     if ( $c->has_errors ) {
-        print "execute finished with errors!";
+        print "execute finished with errors!\n";
         print "arr err dmp:\n", dump $c->errors ;
         print "\n";
 
         #$c->clear_errors;
     }
     else {
-        print "execute finished - no errors.";
+        print "execute finished - no errors.\n";
     }
 };
 
