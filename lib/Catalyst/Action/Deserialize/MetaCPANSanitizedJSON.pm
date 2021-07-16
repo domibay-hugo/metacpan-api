@@ -108,6 +108,20 @@ around execute => sub {
     return $result;
 };
 
+after 'execute' => sub {
+    my ( $self, $controller, $c, $test ) = @_;
+    #$c->stash->{foo} = 'bar';
+
+
+    if ( $c->has_errors ) {
+        print "execute finished with errors!";
+        print "arr err dmp:\n", dump $c->errors ;
+        print "\n";
+        #$c->clear_errors;
+    }
+};
+
+
 __PACKAGE__->meta->make_immutable;
 
 1;
