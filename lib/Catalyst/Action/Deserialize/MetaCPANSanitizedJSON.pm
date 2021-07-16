@@ -42,6 +42,9 @@ around execute => sub {
                         , [ { 'exception_type' => ref($result), 'description' => $arrdescription[0]
                             , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ] );
 
+                    $c->error([ { 'exception_type' => ref($result), 'description' => $arrdescription[0]
+                            , 'file' => $arrdescription[1], 'lines' => $arrdescription[2] } ]);
+
                     #Set Result to the Exception Message
                     $result = $arrdescription[0];
                 }
@@ -116,6 +119,7 @@ after 'execute' => sub {
 
     print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
 
+    print "State '", $c->state, "'\n";
     print "Status Code [", $c->res->code, "]\n";
     print "Content-Type: '", $c->res->content_type ,"'\n" ;
     print "Response Body: '", $c->res->body ,"'\n" ;
