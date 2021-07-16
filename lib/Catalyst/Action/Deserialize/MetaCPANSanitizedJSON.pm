@@ -109,15 +109,23 @@ around execute => sub {
 };
 
 after 'execute' => sub {
-    my ( $self, $controller, $c, $test ) = @_;
-    #$c->stash->{foo} = 'bar';
+    my ( $self, $controller, $c ) = @_;
 
+    print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
+
+    print "Status Code [", $c->res->code, "]\n";
+    print "Content-Type: '", $c->res->content_type ,"'\n" ;
+    print "Response Body: '", $c->res->body ,"'\n" ;
 
     if ( $c->has_errors ) {
         print "execute finished with errors!";
         print "arr err dmp:\n", dump $c->errors ;
         print "\n";
+
         #$c->clear_errors;
+    }
+    else {
+        print "execute finished - no errors.";
     }
 };
 

@@ -230,14 +230,14 @@ sub bad_request_json : Private  {
 
     $c->res->code(400);
     $c->cdn_never_cache(1);
-    $c->res->content_type('application/json');
+    #$c->res->content_type('application/json');
 
     $c->stash( { message => 'Bad Request' } );
     $c->stash( { description => $description } );
 
-    if ( $c->has_errors ) {
-        $c->clear_errors;
-    }
+#    if ( $c->has_errors ) {
+#        $c->clear_errors;
+#    }
 
     $c->detach( $c->view('JSON') );
 }
@@ -262,8 +262,6 @@ before 'end' => sub {
     my ( $self, $c ) = @_;
 
     print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
-    #print "res dmp:\n", dump $c->res ;
-    #print "\n";
 
     if ( $c->res->code == 400 ) {
         print "Status Code [", $c->res->code, "]\n";
