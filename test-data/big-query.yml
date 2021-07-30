@@ -63,7 +63,7 @@ query:
       use Net::FTP;
        
       $ftp = Net::FTP->new("some.host.name", Debug => 0)
-        or die "Cannot connect to some.host.name \: $@";
+        or die "Cannot connect to some.host.name : $@";
        
       $ftp->login("anonymous",'-anonymous@')
         or die "Cannot login ", $ftp->message;
@@ -428,4 +428,4 @@ filter:
     - exists:
         field: "module.name"
 fields: ["module.name", "documentation", "release", "maturity", "status", "name", "path", "level", "download_url"]
-size: 10
+size: 11

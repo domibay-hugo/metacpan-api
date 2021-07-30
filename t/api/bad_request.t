@@ -21,7 +21,14 @@ my $t   = Test::Mojo->new('MetaCPAN::API');
 
 
 my $bigquery = YAML::XS::LoadFile($FindBin::Bin . '/../../test-data/big-query.yml');
-my $sbigqueryjson = JSON::XS::encode_json($bigquery);
+my $sbigqueryjson = undef;
+
+
+#Escape Control Characters
+$bigquery->{'query_string'}->{'query'} =~ s#:#\:#;
+$bigquery->{'query_string'}->{'query'} =~ s#/#\/#;
+
+$sbigqueryjson = JSON::XS::encode_json($bigquery);
 
 # Big Search Query
 # should return a Query Limit Error
