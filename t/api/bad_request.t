@@ -30,7 +30,7 @@ $t->post_ok('/file/_search' => => {Accept => 'application/json'} => $sbigqueryjs
   ->json_like('/error' => qr/exceeds maximum/);
 
 
-$tx = $t->tx;
+my $tx = $t->tx;
 
 print "Request Query Size: '", length($sbigqueryjson), "'\n";
 print "Status Code: [", $tx->res->code, "]\n";
@@ -52,7 +52,7 @@ $t->post_ok('/file/_search' => => {Accept => 'application/json'} => 'some conten
   ->json_like('/error' => qr/malformed JSON string/);
 
 
-my $tx = $t->tx;
+$tx = $t->tx;
 
 print "Status Code: [", $tx->res->code, "]\n";
 print "Content-Type: '", $tx->res->headers->content_type , "'\n";
