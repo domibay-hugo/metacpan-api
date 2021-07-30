@@ -38,17 +38,17 @@ else {
 }
 
 
-my $bigquery = YAML::XS::LoadFile('../../../test-data/big-query.yml');
+my $bigquery = YAML::XS::LoadFile($FindBin::Bin . '/../../test-data/big-query.yml');
 
 
 # Big Search Query
 # should return a Query Limit Error
 $t->post_ok('/file/_search' => => {Accept => 'application/json'} => json_encode($bigquery))
   ->status_is(416)
-  ->json_like('/description/description' => qr/malformed JSON/);
+  ->json_like('/error' => qr/exceeds maximum/);
 
 
-my $tx = $t->tx;
+$tx = $t->tx;
 
 print "Status Code: [", $tx->res->code, "]\n";
 print "Content-Type: '", $tx->res->headers->content_type , "'\n";
