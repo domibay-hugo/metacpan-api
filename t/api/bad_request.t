@@ -25,8 +25,8 @@ my $sbigqueryjson = undef;
 
 
 #Escape Control Characters
-$bigquery->{'query_string'}->{'query'} =~ s#:#\:#;
-$bigquery->{'query_string'}->{'query'} =~ s#/#\/#;
+$bigquery->{'query'}->{'query_string'}->{'query'} =~ s#:#\:#;
+$bigquery->{'query'}->{'query_string'}->{'query'} =~ s#/#\/#;
 
 $sbigqueryjson = JSON::XS::encode_json($bigquery);
 

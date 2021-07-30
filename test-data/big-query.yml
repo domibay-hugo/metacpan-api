@@ -428,4 +428,4 @@ filter:
     - exists:
         field: "module.name"
 fields: ["module.name", "documentation", "release", "maturity", "status", "name", "path", "level", "download_url"]
-size: 11
+size: 5001
