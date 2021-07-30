@@ -110,6 +110,7 @@ sub search : Path('_search') : ActionClass('~Deserialize') {
     delete $params->{$_} for qw(type index body join);
     {
         my $size = $params->{size} || ( $req->data || {} )->{size};
+        print "" . (caller(0))[3] . " - size: '$size'\n";
         $c->detach( '/bad_request',
             [ "size parameter exceeds maximum of $MAX_SIZE", 416 ] )
             if ( $size && $size > $MAX_SIZE );
