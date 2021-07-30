@@ -10,7 +10,7 @@ BEGIN
 
 use MetaCPAN::DarkPAN ();
 use Path::Tiny;
-use YAML::Tiny;
+use YAML::XS;
 use JSON::XS;
 use Test::More;
 use Test::Mojo;
@@ -38,7 +38,7 @@ else {
 }
 
 
-my $bigquery = YAML::Tiny::LoadFile('../../test-data/big-query.yml');
+my $bigquery = YAML::XS::LoadFile('../../test-data/big-query.yml');
 
 
 # Big Search Query
