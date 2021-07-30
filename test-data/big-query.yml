@@ -1,0 +1,14 @@
+---
+# name: Big Result
+# version: 0.0.1
+# abstract: Test a Big Result Request
+
+query:
+  query_string:
+    query: "cpanfile"
+filter:
+  and:
+    - term:
+        status: "latest"
+fields: ["module.name", "documentation", "release", "maturity", "status", "name", "path", "level", "download_url"]
+size: 5001

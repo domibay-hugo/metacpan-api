@@ -8,6 +8,8 @@ use Moose::Util      ();
 use MetaCPAN::Types::TypeTiny qw( HashRef );
 use MetaCPAN::Util qw( single_valued_arrayref_to_scalar );
 
+use Data::Dump qw(dump);
+
 BEGIN { extends 'Catalyst::Controller'; }
 
 __PACKAGE__->config(
@@ -108,6 +110,7 @@ sub search : Path('_search') : ActionClass('~Deserialize') {
     delete $params->{$_} for qw(type index body join);
     {
         my $size = $params->{size} || ( $req->data || {} )->{size};
+        print "" . (caller(0))[3] . " - size: '$size'\n";
         $c->detach( '/bad_request',
             [ "size parameter exceeds maximum of $MAX_SIZE", 416 ] )
             if ( $size && $size > $MAX_SIZE );
@@ -221,6 +224,25 @@ sub not_found : Private {
     $c->stash( { message => 'Not found' } );
 }
 
+sub bad_request_json : Private  {
+    my ( $self, $c, $description ) = @_;
+
+    print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
+
+    $c->res->code(400);
+    $c->cdn_never_cache(1);
+    #$c->res->content_type('application/json');
+
+    $c->stash( { message => 'Bad Request' } );
+    $c->stash( { description => $description } );
+
+#    if ( $c->has_errors ) {
+#        $c->clear_errors;
+#    }
+
+    $c->detach( $c->view('JSON') );
+}
+
 sub internal_error {
     my ( $self, $c, $message ) = @_;
     $c->cdn_never_cache(1);
@@ -236,6 +258,22 @@ sub internal_error {
         $c->detach( $c->view('JSON') );
     }
 }
+
+before 'end' => sub {
+    my ( $self, $c ) = @_;
+
+    print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
+
+    if ( $c->res->code == 400
+      || $c->res->code == 416 ) {
+        print "Status Code [", $c->res->code, "]\n";
+        print "Content-Type: '", $c->res->content_type ,"'\n" ;
+        print "Response Body: '", $c->res->body ,"'\n" ;
+
+        $c->detach( $c->view('JSON') );
+#    $c->detach('/bad_request_json', $rarrargs);
+    } #if ( $c->res->code == 400 )
+};
 
 sub end : Private {
     my ( $self, $c ) = @_;
