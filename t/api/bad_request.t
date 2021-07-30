@@ -34,7 +34,7 @@ $sbigqueryjson = JSON::XS::encode_json($bigquery);
 # should return a Query Limit Error
 $t->post_ok('/file/_search' => => {Accept => 'application/json'} => $sbigqueryjson)
   ->status_is(416)
-  ->json_like('/error' => qr/exceeds maximum/);
+  ->json_like('/message' => qr/exceeds maximum/);
 
 
 my $tx = $t->tx;
