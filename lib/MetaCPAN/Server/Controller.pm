@@ -264,7 +264,8 @@ before 'end' => sub {
 
     print "'" . (caller(1))[3] . "' : Signal to '" . (caller(0))[3] . "'\n";
 
-    if ( $c->res->code == 400 ) {
+    if ( $c->res->code == 400
+      || $c->res->code == 416 ) {
         print "Status Code [", $c->res->code, "]\n";
         print "Content-Type: '", $c->res->content_type ,"'\n" ;
         print "Response Body: '", $c->res->body ,"'\n" ;
