@@ -43,7 +43,7 @@ my $bigquery = YAML::XS::LoadFile($FindBin::Bin . '/../../test-data/big-query.ym
 
 # Big Search Query
 # should return a Query Limit Error
-$t->post_ok('/file/_search' => => {Accept => 'application/json'} => JSON::XS::json_encode($bigquery))
+$t->post_ok('/file/_search' => => {Accept => 'application/json'} => JSON::XS::encode_json($bigquery))
   ->status_is(416)
   ->json_like('/error' => qr/exceeds maximum/);
 
