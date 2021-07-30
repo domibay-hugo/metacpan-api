@@ -22,7 +22,7 @@ my $t   = Test::Mojo->new('MetaCPAN::API');
 # should return valid JSON Response
 $t->post_ok('/file/_search' => => {Accept => 'application/json'} => 'some content as invalid JSON')
   ->status_is(400)
-  ->json_like('/error' => qr/problem with your request/);
+  ->json_like('/error' => qr/malformed JSON string/);
 
 
 my $tx = $t->tx;
@@ -39,17 +39,18 @@ else {
 
 
 my $bigquery = YAML::XS::LoadFile($FindBin::Bin . '/../../test-data/big-query.yml');
-
+my $sbigqueryjson = JSON::XS::encode_json($bigquery);
 
 # Big Search Query
 # should return a Query Limit Error
-$t->post_ok('/file/_search' => => {Accept => 'application/json'} => JSON::XS::encode_json($bigquery))
+$t->post_ok('/file/_search' => => {Accept => 'application/json'} => $sbigqueryjson)
   ->status_is(416)
   ->json_like('/error' => qr/exceeds maximum/);
 
 
 $tx = $t->tx;
 
+print "Request Query Size: '", length($sbigqueryjson), "'\n";
 print "Status Code: [", $tx->res->code, "]\n";
 print "Content-Type: '", $tx->res->headers->content_type , "'\n";
 
