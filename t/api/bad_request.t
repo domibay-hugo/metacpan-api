@@ -38,7 +38,7 @@ else {
 }
 
 
-my $bigquery = YAML::XS::LoadFile('../../test-data/big-query.yml');
+my $bigquery = YAML::XS::LoadFile('../../../test-data/big-query.yml');
 
 
 # Big Search Query
