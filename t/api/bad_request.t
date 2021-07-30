@@ -22,7 +22,7 @@ my $t   = Test::Mojo->new('MetaCPAN::API');
 # should return valid JSON Response
 $t->post_ok('/file/_search' => => {Accept => 'application/json'} => 'some content as invalid JSON')
   ->status_is(400)
-  ->json_like('/description/description' => qr/malformed JSON/);
+  ->json_like('/error' => qr/problem with your request/);
 
 
 my $tx = $t->tx;
