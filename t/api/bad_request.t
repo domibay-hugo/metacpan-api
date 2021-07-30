@@ -9,7 +9,9 @@ BEGIN
 } #BEGIN
 
 use MetaCPAN::DarkPAN ();
-use Path::Tiny qw( path );
+use Path::Tiny;
+use YAML::Tiny;
+use JSON::XS;
 use Test::More;
 use Test::Mojo;
 
@@ -34,6 +36,31 @@ if ( length($tx->res->body) < 1000 ) {
 else {
     print "Response Body (> 1000): too big!\n";
 }
+
+
+my $bigquery = YAML::Tiny::LoadFile('../../test-data/big-query.yml');
+
+
+# Big Search Query
+# should return a Query Limit Error
+$t->post_ok('/file/_search' => => {Accept => 'application/json'} => json_encode($bigquery))
+  ->status_is(416)
+  ->json_like('/description/description' => qr/malformed JSON/);
+
+
+my $tx = $t->tx;
+
+print "Status Code: [", $tx->res->code, "]\n";
+print "Content-Type: '", $tx->res->headers->content_type , "'\n";
+
+if ( length($tx->res->body) < 1000 ) {
+    print "Response Body (max 1000): '", $tx->res->body, "'\n";
+}
+else {
+    print "Response Body (> 1000): too big!\n";
+}
+
+
 
 
 done_testing();
